@@ -145,7 +145,7 @@ class TextUtilTest {
 
     @Test
     void replaceArgsLeavesUnmatchedPlaceholders() {
-        assertEquals("Hello %arg_1% World",
+        assertEquals("Hello World %arg_2%",
             TextUtil.replaceArgs("Hello %arg_1% %arg_2%", List.of("World")));
     }
 
