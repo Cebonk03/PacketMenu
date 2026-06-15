@@ -122,7 +122,9 @@ public class PacketMenuPlugin extends JavaPlugin implements Listener {
     }
 
     private void initializeConfig() {
-        saveDefaultConfig();
+        if (getResource("config.yml") != null) {
+            saveDefaultConfig();
+        }
         reloadConfig();
     }
 
