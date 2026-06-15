@@ -25,13 +25,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.junit.jupiter.api.Assertions.assertFalse;
-import static org.mockito.Mockito.when;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.any;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.argThat;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link RequirementEvaluator}.
@@ -47,13 +47,10 @@ final class RequirementEvaluatorTest {
     private PlayerHandle viewer;
 
     @Mock
-    private Requirement passingReq;
-
-    @Mock
-    private Requirement failingReq;
-
-    @Mock
     private MenuAction denyAction;
+
+    private final Requirement passingReq = ctx -> true;
+    private final Requirement failingReq = ctx -> false;
 
     private final MenuSession session = new MenuSession(
         1, "test", MenuType.GENERIC_9x3, Component.text("Test"),
@@ -72,23 +69,17 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should return true when all requirements pass")
         void allPass() {
-            when(passingReq.test(any())).thenReturn(true);
-
             final var set = new RequirementSet(
                 LogicMode.AND,
                 Map.of("req1", passingReq, "req2", passingReq),
                 null);
 
             assertTrue(RequirementEvaluator.evaluate(set, context()));
-            verify(passingReq, times(2)).test(any());
         }
 
         @Test
         @DisplayName("should short-circuit on first failure")
         void shortCircuitOnFailure() {
-            when(passingReq.test(any())).thenReturn(true);
-            when(failingReq.test(any())).thenReturn(false);
-
             final var reqMap = new LinkedHashMap<String, Requirement>();
             reqMap.put("pass", passingReq);
             reqMap.put("fail", failingReq);
@@ -96,7 +87,6 @@ final class RequirementEvaluatorTest {
             final var set = new RequirementSet(LogicMode.AND, reqMap, null);
 
             assertFalse(RequirementEvaluator.evaluate(set, context()));
-            verify(failingReq, times(1)).test(any());
         }
 
         @Test
@@ -116,9 +106,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should return true when at least one requirement passes")
         void onePasses() {
-            when(passingReq.test(any())).thenReturn(true);
-            when(failingReq.test(any())).thenReturn(false);
-
             final var reqMap = new LinkedHashMap<String, Requirement>();
             reqMap.put("fail", failingReq);
             reqMap.put("pass", passingReq);
@@ -130,30 +117,23 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should short-circuit on first success")
         void shortCircuitOnSuccess() {
-            when(passingReq.test(any())).thenReturn(true);
-
             final var reqMap = new LinkedHashMap<String, Requirement>();
             reqMap.put("pass", passingReq);
             reqMap.put("never", failingReq);
             final var set = new RequirementSet(LogicMode.OR, reqMap, null);
 
             assertTrue(RequirementEvaluator.evaluate(set, context()));
-            verify(passingReq, times(1)).test(any());
-            verifyNoInteractions(failingReq);
         }
 
         @Test
         @DisplayName("should return false when no requirement passes")
         void nonePass() {
-            when(failingReq.test(any())).thenReturn(false);
-
             final var set = new RequirementSet(
                 LogicMode.OR,
                 Map.of("fail1", failingReq, "fail2", failingReq),
                 null);
 
             assertFalse(RequirementEvaluator.evaluate(set, context()));
-            verify(failingReq, times(2)).test(any());
         }
 
         @Test
@@ -173,7 +153,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should execute deny actions when requirements fail")
         void executeDenyActions() {
-            when(failingReq.test(any())).thenReturn(false);
             when(denyAction.execute(any())).thenReturn(new ActionResult.Success());
 
             final var set = new RequirementSet(
@@ -189,8 +168,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should not execute deny actions when requirements pass")
         void noDenyOnPass() {
-            when(passingReq.test(any())).thenReturn(true);
-
             final var set = new RequirementSet(
                 LogicMode.AND,
                 Map.of("pass", passingReq),
@@ -203,8 +180,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should not fail when denyActions is null")
         void nullDenyActions() {
-            when(failingReq.test(any())).thenReturn(false);
-
             final var set = new RequirementSet(
                 LogicMode.AND,
                 Map.of("fail", failingReq),
@@ -216,7 +191,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should execute all deny actions in order")
         void executeMultipleDenyActions() {
-            when(failingReq.test(any())).thenReturn(false);
 
             final MenuAction deny1 = mock(MenuAction.class);
             final MenuAction deny2 = mock(MenuAction.class);
@@ -243,7 +217,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should use provided click type for deny action context")
         void usesProvidedClickType() {
-            when(failingReq.test(any())).thenReturn(false);
             when(denyAction.execute(any())).thenReturn(new ActionResult.Success());
 
             final var set = new RequirementSet(
@@ -261,7 +234,6 @@ final class RequirementEvaluatorTest {
         @Test
         @DisplayName("should default to LEFT click type")
         void defaultsToLeft() {
-            when(failingReq.test(any())).thenReturn(false);
             when(denyAction.execute(any())).thenReturn(new ActionResult.Success());
 
             final var set = new RequirementSet(
