@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 @NullMarked
-public final class PacketMenuPlugin extends JavaPlugin {
+public class PacketMenuPlugin extends JavaPlugin {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PacketMenuPlugin.class);
 
