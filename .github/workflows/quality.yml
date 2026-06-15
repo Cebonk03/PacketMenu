@@ -1,0 +1,63 @@
+# =============================================================================
+# Code Quality — .github/workflows/quality.yml
+# Lint, static analysis, architecture tests, and test report upload.
+# Runs on every push/PR to main, independent of build matrix.
+# Default JDK: Temurin 21.
+# =============================================================================
+name: Quality
+
+on:
+  push:
+    branches: [main, master, develop]
+  pull_request:
+    branches: [main, master]
+
+concurrency:
+  group: quality-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  ORG_GRADLE_PROJECT_configurationCache: false
+
+jobs:
+  quality:
+    runs-on: ubuntu-24.04
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 21 (Temurin)
+        uses: actions/setup-java@v4
+        with:
+          java-version: 21
+          distribution: temurin
+
+      - name: Set up Gradle (cached)
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Checkstyle (main sources)
+        run: >
+          ./gradlew checkstyleMain
+          --no-configuration-cache
+
+      - name: SpotBugs (main sources)
+        run: >
+          ./gradlew spotbugsMain
+          --no-configuration-cache
+
+      - name: Test (including architecture tests)
+        run: >
+          ./gradlew test
+          --no-configuration-cache
+
+      - name: Upload test reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-reports
+          path: |
+            build/reports/tests/
+            build/reports/checkstyle/
+            build/reports/spotbugs/
+          if-no-files-found: warn

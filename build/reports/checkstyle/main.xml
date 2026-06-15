@@ -1,0 +1,189 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<checkstyle version="10.20.2">
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/LogicMode.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/Requirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ClickType.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/MenuType.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/MenuSession.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ItemStackSnapshot.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ClickHandler.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ViewRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/MenuAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ClickContext.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/RequirementContext.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ActionContext.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/ActionResult.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/SlotItem.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/SlotTemplate.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/MenuTemplate.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/domain/RequirementSet.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/SchedulerPort.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/SessionManager.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/PlayerHandle.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/PacketComposer.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/MenuLoader.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/ActionParser.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/PlaceholderPort.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/EconomyPort.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/port/MenuRegistry.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/ContainerIdAllocator.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/ClickInterpreter.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/MenuRegistry.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/MenuFactory.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/HasPermissionRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/HasPermissionsRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/HasMoneyRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/HasItemRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/HasExpRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/StringEqualsRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/StringContainsRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/NumberGreaterRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/NumberLessRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/requirements/JavascriptRequirement.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/MessageAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/ConsoleAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/PlayerAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/CloseAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/SoundAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/RefreshAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/OpenGuiAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/TakeMoneyAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/GiveMoneyAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/GiveItemAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/TakeItemAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/DelayAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/BroadcastAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/JsonBroadcastAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/BroadcastSoundWorldAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/GivePermissionAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/TakePermissionAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/actions/PlaceholderAction.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/RequirementEvaluator.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/ActionRegistry.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/core/service/RequirementRegistry.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/packetevents/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/packetevents/VersionCapabilities.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/packetevents/PacketEventsComposer.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/packetevents/PacketEventBus.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/paper/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/paper/PaperSchedulerAdapter.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/paper/PaperSessionManager.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/paper/PaperPlayerHandle.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/ItemTemplateCompiler.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/InvalidMenuException.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/InheritedMenuLoader.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/ConfigurateMenuLoader.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/config/DeluxeActionParser.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/placeholder/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/placeholder/NoOpPlaceholderAdapter.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/placeholder/PlaceholderAPIAdapter.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/adapter/placeholder/VaultAdapter.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/bootstrap/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/bootstrap/PacketMenuPlugin.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/bootstrap/ServiceRegistry.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/bootstrap/PacketMenuCommand.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/util/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/util/Validation.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/util/TextUtil.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/api/package-info.java">
+</file>
+<file name="/root/PacketMenu/src/main/java/com/cebonk03/packetmenu/package-info.java">
+</file>
+</checkstyle>

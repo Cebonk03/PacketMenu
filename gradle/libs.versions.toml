@@ -1,0 +1,62 @@
+[versions]
+# Minecraft / Paper
+paper-api = "1.21.4-R0.1-SNAPSHOT"
+
+# External plugin deps (not shaded)
+packetevents = "2.7.0"
+
+# Shaded deps
+configurate-yaml = "4.1.2"
+caffeine = "3.1.8"
+
+# External plugin deps (soft — compileOnly, not shaded)
+placeholderapi = "2.11.6"
+vault = "1.7.1"
+
+# Annotations
+jspecify = "1.0.0"
+
+# Testing
+junit = "5.11.4"
+mockito = "5.14.2"
+archunit = "1.3.0"
+mockbukkit = "2.221.0"
+
+# Gradle plugins
+shadow = "9.4.2"
+plugin-yml = "0.6.0"
+spotbugs = "6.0.27"
+
+# Tool versions (for buildscript reference)
+checkstyle-tool = "10.20.2"
+spotbugs-tool = "4.8.6"
+
+[libraries]
+# Paper / Minecraft
+paper-api = { module = "io.papermc.paper:paper-api", version.ref = "paper-api" }
+
+# External plugin dependencies (compileOnly — NOT shaded)
+packetevents-spigot = { module = "com.github.retrooper:packetevents-spigot", version.ref = "packetevents" }
+
+# Soft external plugin dependencies (compileOnly — NOT shaded, runtime check)
+placeholderapi = { module = "me.clip:placeholderapi", version.ref = "placeholderapi" }
+vault-api = { module = "com.github.MilkBowl:VaultAPI", version.ref = "vault" }
+
+# Shaded dependencies
+configurate-yaml = { module = "org.spongepowered:configurate-yaml", version.ref = "configurate-yaml" }
+caffeine = { module = "com.github.ben-manes.caffeine:caffeine", version.ref = "caffeine" }
+
+# Annotations (compileOnly)
+jspecify = { module = "org.jspecify:jspecify", version.ref = "jspecify" }
+
+# Testing
+junit-bom = { module = "org.junit:junit-bom", version.ref = "junit" }
+mockito-core = { module = "org.mockito:mockito-core", version.ref = "mockito" }
+mockito-junit-jupiter = { module = "org.mockito:mockito-junit-jupiter", version.ref = "mockito" }
+archunit-junit5 = { module = "com.tngtech.archunit:archunit-junit5", version.ref = "archunit" }
+mockbukkit = { module = "com.github.seeseemelk:mockbukkit-v1.21", version.ref = "mockbukkit" }
+
+[plugins]
+shadow = { id = "com.gradleup.shadow", version.ref = "shadow" }
+plugin-yml-paper = { id = "net.minecrell.plugin-yml.paper", version.ref = "plugin-yml" }
+spotbugs = { id = "com.github.spotbugs", version.ref = "spotbugs" }

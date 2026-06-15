@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FindBugsFilter
+        xmlns="https://github.com/spotbugs/filter/3.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="https://github.com/spotbugs/filter/3.0 https://raw.githubusercontent.com/spotbugs/spotbugs/4.8.x/spotbugs/etc/findbugsfilter.xsd">
+
+    <!--
+        PacketMenu SpotBugs Exclusion Filter
+        Suppresses false positives common in Minecraft plugin development.
+    -->
+
+    <!--
+        EI_EXPOSE_REP: Exposing internal representation.
+        Minecraft plugins commonly expose immutable snapshots or cached
+        collections where the risk is understood and mitigated by design.
+    -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP"/>
+    </Match>
+
+    <!--
+        EI_EXPOSE_REP2: Exposing internal representation (setter side).
+        Similar to above — intentional by design in plugin internals.
+    -->
+    <Match>
+        <Bug pattern="EI_EXPOSE_REP2"/>
+    </Match>
+
+    <!--
+        SE_NO_SERIALVERSIONID: Class is serializable but no serialVersionUID.
+        PacketMenu records and Minecraft-related classes are NOT serialized
+        across JVMs; serialization is never used intentionally.
+    -->
+    <Match>
+        <Bug pattern="SE_NO_SERIALVERSIONID"/>
+    </Match>
+
+    <!--
+        RCN_REDUNDANT_NULLCHECK: Redundant null check.
+        Common in Minecraft plugin code where null-check patterns are
+        used defensively even when analysis proves null is impossible.
+    -->
+    <Match>
+        <Bug pattern="RCN_REDUNDANT_NULLCHECK"/>
+    </Match>
+
+</FindBugsFilter>

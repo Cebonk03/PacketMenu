@@ -1,0 +1,22 @@
+name: PacketMenu
+version: 1.0.0
+main: com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin
+folia-supported: true
+api-version: 1.21
+depend:
+  - PacketEvents
+softdepend:
+  - PlaceholderAPI
+  - Vault
+commands:
+  packetmenu:
+    description: Main PacketMenu command
+    aliases: [pm, pmenu]
+    permission: packetmenu.command
+permissions:
+  packetmenu.command:
+    description: Allows using /packetmenu command
+    default: true
+  packetmenu.admin:
+    description: Allows administrative PacketMenu operations
+    default: op

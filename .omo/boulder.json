@@ -1,0 +1,171 @@
+{
+  "schema_version": 2,
+  "active_work_id": "packetmenu-14139697",
+  "works": {
+    "packetmenu-14139697": {
+      "work_id": "packetmenu-14139697",
+      "active_plan": "/root/PacketMenu/.omo/plans/packetmenu.md",
+      "plan_name": "packetmenu",
+      "status": "active",
+      "started_at": "2026-06-15T02:03:08.186Z",
+      "updated_at": "2026-06-15T07:07:46.451Z",
+      "session_ids": [
+        "opencode:ses_136fb5351ffeAQvDHeevRBmwqv",
+        "opencode:ses_136a42e97ffe21IMLFLx4wkhut"
+      ],
+      "session_origins": {
+        "opencode:ses_136fb5351ffeAQvDHeevRBmwqv": "direct",
+        "opencode:ses_136a42e97ffe21IMLFLx4wkhut": "appended"
+      },
+      "agent": "atlas",
+      "task_sessions": {
+        "todo:1": {
+          "task_key": "todo:1",
+          "task_label": "1",
+          "task_title": "Build system — Gradle, version catalog, dependencies",
+          "session_id": "opencode:ses_136f9a9fdffe3gzk42t7EiEgLB",
+          "agent": "Sisyphus-Junior",
+          "category": "unspecified-high",
+          "updated_at": "2026-06-15T03:37:41.148Z",
+          "started_at": "2026-06-15T03:00:51.033Z",
+          "status": "completed",
+          "ended_at": "2026-06-15T03:37:41.148Z",
+          "elapsed_ms": 2210115
+        },
+        "todo:5": {
+          "task_key": "todo:5",
+          "task_label": "5",
+          "task_title": "Domain model records",
+          "session_id": "opencode:ses_136a39c5affeZylMgb2wAYcXPj",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "updated_at": "2026-06-15T04:33:43.729Z",
+          "started_at": "2026-06-15T03:52:08.879Z",
+          "status": "completed",
+          "ended_at": "2026-06-15T04:33:43.729Z",
+          "elapsed_ms": 2494850
+        },
+        "todo:9": {
+          "task_key": "todo:9",
+          "task_label": "9",
+          "task_title": "PacketEventsComposer — packet send/recv implementation",
+          "session_id": "opencode:ses_13671013effeD7AVSiuC5bLC6x",
+          "agent": "Sisyphus-Junior",
+          "category": "deep",
+          "updated_at": "2026-06-15T05:15:46.248Z",
+          "started_at": "2026-06-15T05:13:28.124Z",
+          "status": "completed",
+          "ended_at": "2026-06-15T05:15:46.248Z",
+          "elapsed_ms": 138124
+        },
+        "todo:13": {
+          "task_key": "todo:13",
+          "task_label": "13",
+          "task_title": "ConfigurateMenuLoader — YAML parser",
+          "session_id": "opencode:ses_1364aa93affef7DyLQ2lmqFoH6",
+          "agent": "Sisyphus-Junior",
+          "category": "unspecified-high",
+          "updated_at": "2026-06-15T05:58:49.090Z",
+          "started_at": "2026-06-15T05:56:39.179Z",
+          "status": "completed",
+          "ended_at": "2026-06-15T05:58:49.090Z",
+          "elapsed_ms": 129911
+        },
+        "todo:17": {
+          "task_key": "todo:17",
+          "task_label": "17",
+          "task_title": "MenuAction framework + Tier 1-2 actions",
+          "session_id": "opencode:ses_136224b84ffeKApYfZMEImlZQ9",
+          "agent": "Sisyphus-Junior",
+          "category": "unspecified-high",
+          "updated_at": "2026-06-15T07:07:46.451Z",
+          "started_at": "2026-06-15T07:00:07.776Z",
+          "status": "completed",
+          "ended_at": "2026-06-15T07:07:46.450Z",
+          "elapsed_ms": 458674
+        }
+      }
+    }
+  },
+  "active_plan": "/root/PacketMenu/.omo/plans/packetmenu.md",
+  "started_at": "2026-06-15T02:03:08.186Z",
+  "status": "active",
+  "updated_at": "2026-06-15T07:07:46.451Z",
+  "session_ids": [
+    "opencode:ses_136fb5351ffeAQvDHeevRBmwqv",
+    "opencode:ses_136a42e97ffe21IMLFLx4wkhut"
+  ],
+  "session_origins": {
+    "opencode:ses_136fb5351ffeAQvDHeevRBmwqv": "direct",
+    "opencode:ses_136a42e97ffe21IMLFLx4wkhut": "appended"
+  },
+  "plan_name": "packetmenu",
+  "task_sessions": {
+    "todo:1": {
+      "task_key": "todo:1",
+      "task_label": "1",
+      "task_title": "Build system — Gradle, version catalog, dependencies",
+      "session_id": "opencode:ses_136f9a9fdffe3gzk42t7EiEgLB",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-06-15T03:37:41.148Z",
+      "started_at": "2026-06-15T03:00:51.033Z",
+      "status": "completed",
+      "ended_at": "2026-06-15T03:37:41.148Z",
+      "elapsed_ms": 2210115
+    },
+    "todo:5": {
+      "task_key": "todo:5",
+      "task_label": "5",
+      "task_title": "Domain model records",
+      "session_id": "opencode:ses_136a39c5affeZylMgb2wAYcXPj",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-06-15T04:33:43.729Z",
+      "started_at": "2026-06-15T03:52:08.879Z",
+      "status": "completed",
+      "ended_at": "2026-06-15T04:33:43.729Z",
+      "elapsed_ms": 2494850
+    },
+    "todo:9": {
+      "task_key": "todo:9",
+      "task_label": "9",
+      "task_title": "PacketEventsComposer — packet send/recv implementation",
+      "session_id": "opencode:ses_13671013effeD7AVSiuC5bLC6x",
+      "agent": "Sisyphus-Junior",
+      "category": "deep",
+      "updated_at": "2026-06-15T05:15:46.248Z",
+      "started_at": "2026-06-15T05:13:28.124Z",
+      "status": "completed",
+      "ended_at": "2026-06-15T05:15:46.248Z",
+      "elapsed_ms": 138124
+    },
+    "todo:13": {
+      "task_key": "todo:13",
+      "task_label": "13",
+      "task_title": "ConfigurateMenuLoader — YAML parser",
+      "session_id": "opencode:ses_1364aa93affef7DyLQ2lmqFoH6",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-06-15T05:58:49.090Z",
+      "started_at": "2026-06-15T05:56:39.179Z",
+      "status": "completed",
+      "ended_at": "2026-06-15T05:58:49.090Z",
+      "elapsed_ms": 129911
+    },
+    "todo:17": {
+      "task_key": "todo:17",
+      "task_label": "17",
+      "task_title": "MenuAction framework + Tier 1-2 actions",
+      "session_id": "opencode:ses_136224b84ffeKApYfZMEImlZQ9",
+      "agent": "Sisyphus-Junior",
+      "category": "unspecified-high",
+      "updated_at": "2026-06-15T07:07:46.451Z",
+      "started_at": "2026-06-15T07:00:07.776Z",
+      "status": "completed",
+      "ended_at": "2026-06-15T07:07:46.450Z",
+      "elapsed_ms": 458674
+    }
+  },
+  "agent": "atlas"
+}

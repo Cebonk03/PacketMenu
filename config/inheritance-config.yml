@@ -1,0 +1,111 @@
+# ─────────────────────────────────────────────────────────────────────────────
+# InheritedMenuLoader — Template Inheritance Example
+# ─────────────────────────────────────────────────────────────────────────────
+#
+# This file demonstrates the 'extends' feature which allows a menu template
+# to inherit fields from a parent template, reducing duplication and enabling
+# shared layouts.
+#
+# Usage:
+#   1. Place this file (and all referenced parent templates) in the menus
+#      directory (e.g., plugins/PacketMenu/menus/).
+#   2. The InheritedMenuLoader will resolve the 'extends' chain at load time.
+#
+# Merge rules:
+#   - parent fields serve as the base
+#   - child's title/type/openCommands/fillerItem/updateInterval/
+#     closeOnClickOutside override the parent's
+#   - child's openRequirement overrides parent's
+#   - slots are merged by (slot, priority) — child wins ties
+#   - maximum inheritance depth: 10
+#
+# ─────────────────────────────────────────────────────────────────────────────
+
+# ── Base menu template ───────────────────────────────────────────────────────
+
+# The "base" template defines a shared layout used by all shop menus.
+# It has no 'extends' field, so it stands alone.
+id: "shop_base"
+title: "&8Shop"
+type: CHEST_9x3
+open_commands:
+  - "shop"
+  - "store"
+filler_item:
+  material: BLACK_STAINED_GLASS_PANE
+  display_name: "&7"
+  lore: []
+close_on_click_outside: true
+slots:
+  - slot: 0
+    priority: 0
+    item:
+      material: GRAY_STAINED_GLASS_PANE
+      display_name: "&7"
+  - slot: 8
+    priority: 0
+    item:
+      material: GRAY_STAINED_GLASS_PANE
+      display_name: "&7"
+
+# ── Child template — inherits from shop_base ─────────────────────────────────
+
+# The "blocks" menu extends "shop_base". It inherits the type, filler_item,
+# close_on_click_outside, and border slots from the parent. It overrides
+# the title and open_commands, and adds its own slot content.
+id: "shop_blocks"
+extends: "shop_base"
+title: "&8Shop &7┃ &fBlocks"
+open_commands:
+  - "blocks"
+slots:
+  - slot: 13
+    priority: 10
+    item:
+      material: STONE
+      display_name: "&fStone"
+      lore:
+        - "&7Build with stone blocks"
+        - "&7Price: &a$5"
+    left_click:
+      - type: "command"
+        value: "buy stone 1"
+
+# ── Grandchild template — multi-level inheritance ────────────────────────────
+
+# The "deco" menu extends "shop_blocks" (which itself extends "shop_base").
+# This demonstrates recursive resolution: the chain is
+#   shop_base ← shop_blocks ← shop_deco
+id: "shop_deco"
+extends: "shop_blocks"
+title: "&8Shop &7┃ &dDecorations"
+open_commands:
+  - "deco"
+slots:
+  - slot: 14
+    priority: 10
+    item:
+      material: PAINTING
+      display_name: "&dPainting"
+      lore:
+        - "&7Decorate your build"
+        - "&7Price: &a$10"
+    left_click:
+      - type: "command"
+        value: "buy painting 1"
+
+# ── Standalone menu (no inheritance) ─────────────────────────────────────────
+
+# This menu does not use 'extends'. It is a fully self-contained definition.
+id: "settings"
+title: "&8Settings"
+type: CHEST_9x1
+close_on_click_outside: false
+slots:
+  - slot: 4
+    priority: 0
+    item:
+      material: COMPASS
+      display_name: "&bNavigation"
+      lore:
+        - "&7Click to open navigation"

@@ -1,0 +1,20 @@
+api-version: "1.21"
+name: PacketMenu
+version: 1.0.0-SNAPSHOT
+main: com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin
+description: Packet-based GUI library for Paper/Folia
+folia-supported: true
+dependencies:
+  server:
+    PacketEvents:
+      load: BEFORE
+      required: true
+      join-classpath: true
+    PlaceholderAPI:
+      load: OMIT
+      required: false
+      join-classpath: true
+    Vault:
+      load: OMIT
+      required: false
+      join-classpath: true
