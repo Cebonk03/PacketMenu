@@ -61,7 +61,7 @@
         and discard the result to verify the original is unchanged.
     -->
     <Match>
-        <Class name="unit.domain.MenuSessionTest" />
+        <Package name="unit.domain" />
         <Bug pattern="RV_RETURN_VALUE_IGNORED" />
     </Match>
 
