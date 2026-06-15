@@ -10,6 +10,7 @@ import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.port.SchedulerPort;
 import com.cebonk03.packetmenu.core.service.ContainerIdAllocator;
 import com.cebonk03.packetmenu.core.service.MenuFactory;
+import com.cebonk03.packetmenu.core.service.MetricsLogger;
 import com.cebonk03.packetmenu.core.service.PlayerCache;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
@@ -75,7 +76,8 @@ class PlayerDisconnectTest {
                 placeholderPort,
                 scheduler,
                 updateHandler,
-                playerCache
+                playerCache,
+                new MetricsLogger()
         );
     }
 

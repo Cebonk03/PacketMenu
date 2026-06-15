@@ -15,6 +15,7 @@ import com.cebonk03.packetmenu.core.service.ClickInterpreter;
 import com.cebonk03.packetmenu.core.service.ContainerIdAllocator;
 import com.cebonk03.packetmenu.core.service.MenuFactory;
 import com.cebonk03.packetmenu.core.service.MenuRegistry;
+import com.cebonk03.packetmenu.core.service.MetricsLogger;
 import com.cebonk03.packetmenu.core.service.PlayerCache;
 import com.github.retrooper.packetevents.PacketEvents;
 import java.io.IOException;
@@ -24,6 +25,9 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.BiConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jspecify.annotations.NullMarked;
 import org.slf4j.Logger;
@@ -54,6 +58,8 @@ public class PacketMenuPlugin extends JavaPlugin {
     private SessionManager sessionManager;
     private MenuRegistry menuRegistry;
     private MenuFactory menuFactory;
+    private MetricsLogger metricsLogger;
+    private PlayerCache playerCache;
 
     /**
      * Tracks the active menu session per player UUID.
@@ -87,6 +93,7 @@ public class PacketMenuPlugin extends JavaPlugin {
         initializeServices();
         registerCommands();
         registerPacketListeners();
+        registerEventListeners();
 
         LOGGER.info("PacketMenu has been enabled successfully.");
     }
@@ -97,6 +104,7 @@ public class PacketMenuPlugin extends JavaPlugin {
 
         closeSessions();
         cancelTasks();
+        stopMetrics();
         clearRegistry();
 
         LOGGER.info("PacketMenu has been disabled successfully.");
@@ -138,7 +146,10 @@ public class PacketMenuPlugin extends JavaPlugin {
         final ContainerIdAllocator containerIdAllocator = new ContainerIdAllocator();
         registry.register(ContainerIdAllocator.class, containerIdAllocator);
 
-        final PlayerCache playerCache = new PlayerCache();
+        metricsLogger = new MetricsLogger();
+        registry.register(MetricsLogger.class, metricsLogger);
+
+        playerCache = new PlayerCache();
         registry.register(PlayerCache.class, playerCache);
 
         final PlaceholderPort placeholderPort = new NoOpPlaceholderAdapter();
@@ -159,9 +170,12 @@ public class PacketMenuPlugin extends JavaPlugin {
                 placeholderPort,
                 scheduler,
                 updateHandler,
-                playerCache
+                playerCache,
+                metricsLogger
         );
         registry.register(MenuFactory.class, menuFactory);
+
+        metricsLogger.start();
 
         LOGGER.info("Running on: {} (Folia={})",
                 scheduler.isFolia() ? "Folia" : "Paper",
@@ -198,6 +212,26 @@ public class PacketMenuPlugin extends JavaPlugin {
         LOGGER.info("Registered PacketEventBus for CLICK_WINDOW handling.");
     }
 
+    // ── Event listener registration ───────────────────────────────────────────────
+
+    /**
+     * Registers Bukkit event listeners for player lifecycle events.
+     */
+    private void registerEventListeners() {
+        Bukkit.getPluginManager().registerEvents(new Listener() {
+            @EventHandler
+            public void onPlayerQuit(final PlayerQuitEvent event) {
+                final UUID playerId = event.getPlayer().getUniqueId();
+                menuFactory.cancelUpdates(playerId);
+                activeSessions.remove(playerId);
+                if (playerCache != null) {
+                    playerCache.invalidatePlayer(playerId);
+                }
+            }
+        }, this);
+        LOGGER.info("Registered player lifecycle listeners.");
+    }
+
     // ── Cleanup ──────────────────────────────────────────────────────────────────
 
     private void closeSessions() {
@@ -217,6 +251,13 @@ public class PacketMenuPlugin extends JavaPlugin {
     private void clearRegistry() {
         if (registry != null) {
             registry.clear();
+        }
+    }
+
+    private void stopMetrics() {
+        if (metricsLogger != null) {
+            metricsLogger.stop();
+            LOGGER.info("Metrics logging stopped.");
         }
     }
 }

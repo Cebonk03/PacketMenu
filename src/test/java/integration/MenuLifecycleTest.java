@@ -17,6 +17,7 @@ import com.cebonk03.packetmenu.core.service.ClickInterpreter;
 import com.cebonk03.packetmenu.core.service.ContainerIdAllocator;
 import com.cebonk03.packetmenu.core.service.MenuFactory;
 import com.cebonk03.packetmenu.core.service.MenuRegistry;
+import com.cebonk03.packetmenu.core.service.MetricsLogger;
 import com.cebonk03.packetmenu.core.service.PlayerCache;
 import org.mockbukkit.mockbukkit.MockBukkit;
 import org.mockbukkit.mockbukkit.ServerMock;
@@ -92,7 +93,8 @@ class MenuLifecycleTest {
                 placeholderPort,
                 scheduler,
                 updateHandler,
-                playerCache
+                playerCache,
+                new MetricsLogger()
         );
 
         menuRegistry = new MenuRegistry(

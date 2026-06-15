@@ -6,6 +6,9 @@ import com.cebonk03.packetmenu.core.domain.MenuType;
 import com.cebonk03.packetmenu.core.domain.SlotItem;
 import com.cebonk03.packetmenu.core.port.PacketComposer;
 import com.cebonk03.packetmenu.core.port.PlayerHandle;
+import com.cebonk03.packetmenu.core.service.ItemStackSnapshotPool;
+import com.github.benmanes.caffeine.cache.Cache;
+import com.github.benmanes.caffeine.cache.Caffeine;
 import com.github.retrooper.packetevents.PacketEvents;
 import com.github.retrooper.packetevents.protocol.component.ComponentTypes;
 import com.github.retrooper.packetevents.protocol.component.builtin.item.ItemCustomModelData;
@@ -21,13 +24,23 @@ import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerOp
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerSetSlot;
 import com.github.retrooper.packetevents.wrapper.play.server.WrapperPlayServerWindowItems;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.UUID;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicLong;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * {@link PacketComposer} implementation that uses PacketEvents 2.7.0 packet
@@ -45,6 +58,11 @@ import org.jspecify.annotations.Nullable;
 public final class PacketEventsComposer implements PacketComposer {
 
     private final Plugin plugin;
+    private final Cache<String, List<ItemStack>> packetCache;
+    private final Set<UUID> activeViewers;
+    private final AtomicLong packetsSent;
+    private ScheduledExecutorService metricsExecutor;
+    private @Nullable ItemStackSnapshotPool itemPool;
 
     /**
      * Creates a new composer instance.
@@ -53,13 +71,20 @@ public final class PacketEventsComposer implements PacketComposer {
      */
     public PacketEventsComposer(final Plugin plugin) {
         this.plugin = plugin;
+        this.packetCache = Caffeine.newBuilder()
+                .maximumSize(200)
+                .build();
+        this.activeViewers = Collections.synchronizedSet(new HashSet<>());
+        this.packetsSent = new AtomicLong();
     }
 
     // ── PacketComposer implementation ──────────────────────────────────────────
 
     @Override
     public void openWindow(final PlayerHandle player, final MenuSession session) {
+        ensureMetricsStarted();
         final Player bukkitPlayer = (Player) player.nativePlayer();
+        activeViewers.add(player.getUniqueId());
         final WrapperPlayServerOpenWindow packet = new WrapperPlayServerOpenWindow(
             session.containerId(),
             session.type().protocolTypeId(),
@@ -71,7 +96,23 @@ public final class PacketEventsComposer implements PacketComposer {
     @Override
     public void sendItems(final PlayerHandle player, final MenuSession session) {
         final Player bukkitPlayer = (Player) player.nativePlayer();
+        activeViewers.add(player.getUniqueId());
+
+        final String cacheKey = buildCacheKey(session);
+        final List<ItemStack> cachedItems = packetCache.getIfPresent(cacheKey);
+        if (cachedItems != null) {
+            final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(
+                session.containerId(),
+                session.revisionId(),
+                cachedItems,
+                null
+            );
+            sendPacket(bukkitPlayer, packet);
+            return;
+        }
+
         final List<ItemStack> items = buildItemList(session.type(), session.slots());
+        packetCache.put(cacheKey, items);
         final WrapperPlayServerWindowItems packet = new WrapperPlayServerWindowItems(
             session.containerId(),
             session.revisionId(),
@@ -100,6 +141,7 @@ public final class PacketEventsComposer implements PacketComposer {
 
     @Override
     public void closeWindow(final PlayerHandle player, final int containerId) {
+        activeViewers.remove(player.getUniqueId());
         final Player bukkitPlayer = (Player) player.nativePlayer();
         final WrapperPlayServerCloseWindow packet = new WrapperPlayServerCloseWindow(containerId);
         sendPacket(bukkitPlayer, packet);
@@ -118,6 +160,7 @@ public final class PacketEventsComposer implements PacketComposer {
         player.getScheduler().run(plugin, scheduledTask -> {
             PacketEvents.getAPI().getPlayerManager().sendPacket(player, packet);
         }, null);
+        packetsSent.incrementAndGet();
     }
 
     // ── Item list construction ─────────────────────────────────────────────────
@@ -142,6 +185,22 @@ public final class PacketEventsComposer implements PacketComposer {
             }
         }
         return items;
+    }
+
+    /**
+     * Builds a cache key for the given session's items.
+     *
+     * <p>The key is derived from the container ID, revision ID, and a content
+     * hash of the slot items. When items change the revision ID changes,
+     * resulting in a cache miss and automatic invalidation.
+     */
+    private static String buildCacheKey(final MenuSession session) {
+        int hash = 1;
+        for (final SlotItem slotItem : session.slots()) {
+            hash = 31 * hash + slotItem.slot();
+            hash = 31 * hash + slotItem.item().hashCode();
+        }
+        return session.containerId() + ":" + session.revisionId() + ":" + Integer.toHexString(hash);
     }
 
     // ── Domain → PacketEvents item conversion ──────────────────────────────────
@@ -216,5 +275,69 @@ public final class PacketEventsComposer implements PacketComposer {
         }
 
         return builder.build();
+    }
+
+    // ── Metrics ───────────────────────────────────────────────────────────────
+
+    /**
+     * Registers an {@link ItemStackSnapshotPool} whose pooled-item count will
+     * be included in periodic metrics logging.
+     *
+     * @param itemPool the item pool to monitor
+     */
+    public void setItemPool(final ItemStackSnapshotPool itemPool) {
+        this.itemPool = itemPool;
+    }
+
+    /**
+     * Returns the total number of packets sent since this composer was created.
+     */
+    public long getPacketsSent() {
+        return packetsSent.get();
+    }
+
+    /**
+     * Returns the approximate number of players currently viewing a menu window.
+     */
+    public int getActiveViewerCount() {
+        return activeViewers.size();
+    }
+
+    /**
+     * Starts periodic metrics logging at DEBUG level every 5 minutes.
+     *
+     * <p>Logs active viewer count, total packets sent, packet cache size, and
+     * items pooled count. Metrics are written via the given SLF4J logger.
+     *
+     * @param logger the SLF4J logger to write metrics to
+     */
+    public void startMetricsLogging(final Logger logger) {
+        stopMetricsLogging();
+        metricsExecutor = Executors.newSingleThreadScheduledExecutor(r -> {
+            final Thread t = new Thread(r, "PacketMenu-Metrics");
+            t.setDaemon(true);
+            return t;
+        });
+        metricsExecutor.scheduleAtFixedRate(() -> {
+            final long pooled = itemPool != null ? itemPool.itemsPooledCount() : 0;
+            logger.debug(
+                "Metrics [PacketMenu]: activeViewers={} packetsSent={} packetCacheSize={} itemsPooled={}",
+                activeViewers.size(), packetsSent.get(), packetCache.estimatedSize(), pooled);
+        }, 5, 5, TimeUnit.MINUTES);
+    }
+
+    private void ensureMetricsStarted() {
+        if (metricsExecutor == null || metricsExecutor.isShutdown()) {
+            startMetricsLogging(LoggerFactory.getLogger(PacketEventsComposer.class));
+        }
+    }
+
+    /**
+     * Shuts down the metrics logging executor if it is running.
+     */
+    public void stopMetricsLogging() {
+        if (metricsExecutor != null && !metricsExecutor.isShutdown()) {
+            metricsExecutor.shutdown();
+        }
     }
 }

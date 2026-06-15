@@ -15,6 +15,9 @@ import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.port.SchedulerPort;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -40,6 +43,15 @@ public final class MenuFactory {
     private final SchedulerPort schedulerPort;
     private final BiConsumer<PlayerHandle, MenuSession> updateHandler;
     private final PlayerCache playerCache;
+    private final MetricsLogger metricsLogger;
+
+    /**
+     * Maps player UUID to an {@link AtomicBoolean} cancellation flag for that
+     * player's recurring update task. The flag is set to {@code true} when the
+     * player disconnects or their session is closed, causing the next scheduled
+     * tick to exit without re-scheduling.
+     */
+    private final ConcurrentHashMap<UUID, AtomicBoolean> updateCancelled;
 
     /**
      * Creates a new menu factory.
@@ -51,19 +63,23 @@ public final class MenuFactory {
      *                             may be a no-op if the caller does not require updates
      * @param playerCache          player-specific cache for placeholders, requirements,
      *                             and active sessions
+     * @param metricsLogger        runtime metrics counters; must not be null
      */
     public MenuFactory(
             final ContainerIdAllocator containerIdAllocator,
             final PlaceholderPort placeholderPort,
             final SchedulerPort schedulerPort,
             final BiConsumer<PlayerHandle, MenuSession> updateHandler,
-            final PlayerCache playerCache
+            final PlayerCache playerCache,
+            final MetricsLogger metricsLogger
     ) {
         this.containerIdAllocator = containerIdAllocator;
         this.placeholderPort = placeholderPort;
         this.schedulerPort = schedulerPort;
         this.updateHandler = updateHandler;
         this.playerCache = playerCache;
+        this.metricsLogger = metricsLogger;
+        this.updateCancelled = new ConcurrentHashMap<>();
     }
 
     // ---------------------------------------------------------------
@@ -131,6 +147,10 @@ public final class MenuFactory {
 
         // Step 7 — track session in cache for re-evaluation and lifecycle
         playerCache.setActiveSession(player.getUniqueId(), session);
+
+        // Step 8 — update metrics counters
+        metricsLogger.incrementMenusLoaded();
+        metricsLogger.incrementActiveViewers();
 
         return session;
     }
@@ -239,16 +259,27 @@ public final class MenuFactory {
                 template.parentMenuId()
         );
 
-        // Filter out items whose view requirements are not met
         final List<SlotItem> visible = new ArrayList<>(allSlots.size());
         for (final SlotItem slotItem : allSlots) {
             if (slotItem.viewRequirement() == null) {
                 visible.add(slotItem);
             } else {
-                final RequirementContext ctx = new RequirementContext(
-                        player, tempSession, slotItem);
-                if (slotItem.viewRequirement().test(ctx)) {
-                    visible.add(slotItem);
+                final String reqKey = "req::" + template.id() + ":" + slotItem.slot();
+                final Boolean cached = playerCache.getCachedRequirement(
+                        player.getUniqueId(), reqKey);
+                if (cached != null) {
+                    if (cached) {
+                        visible.add(slotItem);
+                    }
+                } else {
+                    final RequirementContext ctx = new RequirementContext(
+                            player, tempSession, slotItem);
+                    final boolean passes = slotItem.viewRequirement().test(ctx);
+                    playerCache.cacheRequirement(
+                            player.getUniqueId(), reqKey, passes);
+                    if (passes) {
+                        visible.add(slotItem);
+                    }
                 }
             }
         }
@@ -344,25 +375,49 @@ public final class MenuFactory {
             final MenuSession session,
             final MenuTemplate template
     ) {
-        scheduleUpdateTick(player, session, template);
+        final UUID playerId = player.getUniqueId();
+        final AtomicBoolean cancelled = new AtomicBoolean(false);
+        updateCancelled.put(playerId, cancelled);
+        scheduleUpdateTick(player, session, template, cancelled);
     }
 
     private void scheduleUpdateTick(
             final PlayerHandle player,
             final MenuSession session,
-            final MenuTemplate template
+            final MenuTemplate template,
+            final AtomicBoolean cancelled
     ) {
         schedulerPort.runDelayedOnPlayer(player, template.updateInterval(), () -> {
+            if (cancelled.get()) {
+                return;
+            }
             final MenuSession updated = reEvaluate(player, session, template);
             if (updated != session) {
                 updateHandler.accept(player, updated);
-                // Re-schedule with the updated session for the next tick
-                scheduleUpdateTick(player, updated, template);
+                scheduleUpdateTick(player, updated, template, cancelled);
             } else {
-                // Nothing changed — keep scheduling with the same session
-                scheduleUpdateTick(player, session, template);
+                scheduleUpdateTick(player, session, template, cancelled);
             }
         });
+    }
+
+    /**
+     * Cancels the recurring update task for the given player.
+     *
+     * <p>Sets the cancellation flag so that the next scheduled tick exits
+     * without re-scheduling. Also removes the flag from the tracking map
+     * and decrements the active-viewers metrics counter.
+     *
+     * <p>Safe to call when no update task is running for the player.
+     *
+     * @param playerId the unique identifier of the player
+     */
+    public void cancelUpdates(final UUID playerId) {
+        final AtomicBoolean flag = updateCancelled.remove(playerId);
+        if (flag != null) {
+            flag.set(true);
+        }
+        metricsLogger.decrementActiveViewers();
     }
 
     private MenuSession reEvaluate(
