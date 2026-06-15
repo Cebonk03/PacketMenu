@@ -1,0 +1,18 @@
+menu_title: "<bold><rainbow>Fancy Title</rainbow></bold>"
+menu_type: GENERIC_9x6
+items:
+  mini_message_item:
+    material: DIAMOND
+    slot: 0
+    display_name: "<gradient:red:blue>Gradient Name</gradient>"
+    lore:
+      - "<gold>Line 1 with gold"
+      - "<hover:show_text:'<red>Hover!'>Hover over me"
+      - "<italic><green>Italic Green"
+  legacy_item:
+    material: STONE
+    slot: 1
+    display_name: "&#167;cLegacy Red Name"
+    lore:
+      - "&7Gray lore line"
+      - "&6&lGold Bold Lore"

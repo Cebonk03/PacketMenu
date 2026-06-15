@@ -1,0 +1,66 @@
+menu_title: "<gold>My Cool Menu"
+menu_type: GENERIC_9x3
+open_command:
+  - "menu"
+  - "coolmenu"
+open_requirement:
+  requirement:
+    type: has permission
+    permission: "menu.use"
+  deny_commands:
+    - "[message] <red>You cannot use this menu!"
+update_interval: 10
+close_on_click_outside: false
+filler_item:
+  material: BLACK_STAINED_GLASS_PANE
+  display_name: " "
+  amount: 1
+items:
+  diamond_sword:
+    material: DIAMOND_SWORD
+    slot: 4
+    display_name: "<gold>Legendary Sword"
+    lore:
+      - "<gray>A legendary sword of power"
+      - "<dark_gray>+50 Attack Damage"
+    priority: 10
+    enchantments:
+      - sharpness: 7
+      - unbreaking: 3
+    item_flags:
+      - HIDE_ATTRIBUTES
+      - HIDE_ENCHANTS
+    custom_model_data: 1001
+    nbt: "{some_nbt_data:true}"
+    update: true
+    update_interval: 5
+    actions:
+      - "[player] say I clicked the sword!"
+      - "[sound] ENTITY_PLAYER_LEVELUP;1.0;1.0"
+      - "[message] <green>You clicked the legendary sword!"
+    click_requirements:
+      requirement:
+        type: has permission
+        permission: "menu.sword.use"
+      deny_commands:
+        - "[message] <red>You don't have permission to click this!"
+  diamond_pickaxe:
+    material: DIAMOND_PICKAXE
+    slots:
+      - 0
+      - 1
+      - 2
+    display_name: "&#167;6Mining Pickaxe"
+    lore:
+      - "&7A sturdy pickaxe"
+      - "&8Efficiency V"
+    priority: 5
+    enchantments:
+      - efficiency: 5
+    item_flags:
+      - HIDE_UNBREAKABLE
+  skull_item:
+    material: PLAYER_HEAD
+    slot: 8
+    display_name: "<gradient:gold:yellow>Special Skull"
+    skull_texture: "eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODc2ZTQ4OTY3Njk1YjAxYjM3MjU4YjY5YjUzYjM5OTZjZWI0ZmQ0YzE3Y2I5YjE2YmJhNTNmYjUxYzllZjVkIn19fQ=="

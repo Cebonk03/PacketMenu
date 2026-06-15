@@ -1,0 +1,15 @@
+menu_title: "Invalid Menu"
+menu_type: CHEST
+rows: 1
+items:
+  bad_slot:
+    material: STONE
+    slot: 99
+    display_name: "Out of bounds"
+  missing_material:
+    slot: 0
+    display_name: "No material"
+  negative_priority:
+    material: DIRT
+    slot: 0
+    priority: -1

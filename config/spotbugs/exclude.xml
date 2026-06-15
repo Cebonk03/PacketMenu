@@ -44,4 +44,15 @@
         <Bug pattern="RCN_REDUNDANT_NULLCHECK"/>
     </Match>
 
+    <!--
+        NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE: Possible null pointer dereference
+        from return value of called method.
+        HasItemRequirement uses Bukkit PlayerInventory.getContents() which is
+        annotated as @Nullable in the API but never returns null in practice.
+    -->
+    <Match>
+        <Class name="com.cebonk03.packetmenu.core.service.requirements.HasItemRequirement" />
+        <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
+    </Match>
+
 </FindBugsFilter>

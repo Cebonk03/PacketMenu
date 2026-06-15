@@ -17,7 +17,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.BiConsumer;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.jspecify.annotations.NullMarked;
 import org.jspecify.annotations.Nullable;
 
@@ -39,6 +39,7 @@ public final class MenuFactory {
     private final PlaceholderPort placeholderPort;
     private final SchedulerPort schedulerPort;
     private final BiConsumer<PlayerHandle, MenuSession> updateHandler;
+    private final PlayerCache playerCache;
 
     /**
      * Creates a new menu factory.
@@ -48,17 +49,21 @@ public final class MenuFactory {
      * @param schedulerPort        schedules dynamic update tasks
      * @param updateHandler        invoked on each update tick with the refreshed session;
      *                             may be a no-op if the caller does not require updates
+     * @param playerCache          player-specific cache for placeholders, requirements,
+     *                             and active sessions
      */
     public MenuFactory(
             final ContainerIdAllocator containerIdAllocator,
             final PlaceholderPort placeholderPort,
             final SchedulerPort schedulerPort,
-            final BiConsumer<PlayerHandle, MenuSession> updateHandler
+            final BiConsumer<PlayerHandle, MenuSession> updateHandler,
+            final PlayerCache playerCache
     ) {
         this.containerIdAllocator = containerIdAllocator;
         this.placeholderPort = placeholderPort;
         this.schedulerPort = schedulerPort;
         this.updateHandler = updateHandler;
+        this.playerCache = playerCache;
     }
 
     // ---------------------------------------------------------------
@@ -124,7 +129,27 @@ public final class MenuFactory {
             scheduleUpdates(player, session, template);
         }
 
+        // Step 7 — track session in cache for re-evaluation and lifecycle
+        playerCache.setActiveSession(player.getUniqueId(), session);
+
         return session;
+    }
+
+    /**
+     * Creates a new {@link MenuSession} for the given player from the provided template
+     * without any positional arguments.
+     *
+     * <p>This is a convenience overload of {@link #create(PlayerHandle, MenuTemplate, List)}
+     * that passes an empty argument list &mdash; equivalent to calling
+     * {@code create(player, template, List.of())}.
+     *
+     * @param player   the viewer who will see the menu
+     * @param template the menu template describing layout, items, and behaviour
+     * @return a new {@link MenuSession}, or {@code null} if the open requirement denied access
+     */
+    @Nullable
+    public MenuSession create(final PlayerHandle player, final MenuTemplate template) {
+        return create(player, template, List.of());
     }
 
     // ---------------------------------------------------------------
@@ -160,9 +185,12 @@ public final class MenuFactory {
             final Component component,
             final List<String> args
     ) {
-        final String text = PlainTextComponentSerializer.plainText().serialize(component);
+        if (args.isEmpty()) {
+            return component;
+        }
+        final String text = MiniMessage.miniMessage().serialize(component);
         final String resolved = replaceArgs(text, args);
-        return Component.text(resolved);
+        return MiniMessage.miniMessage().deserialize(resolved);
     }
 
     private static String replaceArgs(final String text, final List<String> args) {
@@ -342,6 +370,11 @@ public final class MenuFactory {
             final MenuSession session,
             final MenuTemplate template
     ) {
+        // Skip re-evaluation if the player no longer has an active session
+        if (playerCache.getActiveSession(player.getUniqueId()) == null) {
+            return session;
+        }
+
         final List<SlotItem> currentSlots = session.slots();
         final List<SlotItem> updatedSlots = new ArrayList<>(currentSlots.size());
 

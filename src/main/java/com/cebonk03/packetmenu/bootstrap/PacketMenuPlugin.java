@@ -1,18 +1,27 @@
 package com.cebonk03.packetmenu.bootstrap;
 
+import com.cebonk03.packetmenu.adapter.config.ConfigurateMenuLoader;
 import com.cebonk03.packetmenu.adapter.packetevents.PacketEventBus;
 import com.cebonk03.packetmenu.adapter.paper.PaperPlayerHandle;
 import com.cebonk03.packetmenu.adapter.paper.PaperSchedulerAdapter;
 import com.cebonk03.packetmenu.adapter.paper.PaperSessionManager;
+import com.cebonk03.packetmenu.adapter.placeholder.NoOpPlaceholderAdapter;
 import com.cebonk03.packetmenu.core.domain.MenuSession;
+import com.cebonk03.packetmenu.core.port.PlaceholderPort;
+import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.port.SchedulerPort;
 import com.cebonk03.packetmenu.core.port.SessionManager;
 import com.cebonk03.packetmenu.core.service.ClickInterpreter;
+import com.cebonk03.packetmenu.core.service.ContainerIdAllocator;
+import com.cebonk03.packetmenu.core.service.MenuFactory;
+import com.cebonk03.packetmenu.core.service.MenuRegistry;
+import com.cebonk03.packetmenu.core.service.PlayerCache;
 import com.github.retrooper.packetevents.PacketEvents;
 import java.io.IOException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.BiConsumer;
 import org.bukkit.Bukkit;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -43,6 +52,8 @@ public final class PacketMenuPlugin extends JavaPlugin {
     private ServiceRegistry registry;
     private SchedulerPort scheduler;
     private SessionManager sessionManager;
+    private MenuRegistry menuRegistry;
+    private MenuFactory menuFactory;
 
     /**
      * Tracks the active menu session per player UUID.
@@ -124,6 +135,34 @@ public final class PacketMenuPlugin extends JavaPlugin {
         sessionManager = new PaperSessionManager();
         registry.register(SessionManager.class, sessionManager);
 
+        final ContainerIdAllocator containerIdAllocator = new ContainerIdAllocator();
+        registry.register(ContainerIdAllocator.class, containerIdAllocator);
+
+        final PlayerCache playerCache = new PlayerCache();
+        registry.register(PlayerCache.class, playerCache);
+
+        final PlaceholderPort placeholderPort = new NoOpPlaceholderAdapter();
+        registry.register(PlaceholderPort.class, placeholderPort);
+
+        final ConfigurateMenuLoader configurateLoader = new ConfigurateMenuLoader(scheduler, null);
+        registry.register(ConfigurateMenuLoader.class, configurateLoader);
+
+        menuRegistry = new MenuRegistry(
+                configurateLoader, getDataFolder().toPath().resolve("menus"));
+        registry.register(MenuRegistry.class, menuRegistry);
+
+        final BiConsumer<PlayerHandle, MenuSession> updateHandler = (player, session) -> {
+            // No-op: dynamic update packet dispatch will be wired in a future task
+        };
+        menuFactory = new MenuFactory(
+                containerIdAllocator,
+                placeholderPort,
+                scheduler,
+                updateHandler,
+                playerCache
+        );
+        registry.register(MenuFactory.class, menuFactory);
+
         LOGGER.info("Running on: {} (Folia={})",
                 scheduler.isFolia() ? "Folia" : "Paper",
                 scheduler.isFolia());
@@ -134,7 +173,7 @@ public final class PacketMenuPlugin extends JavaPlugin {
     private void registerCommands() {
         final PluginCommand command = getCommand("packetmenu");
         if (command != null) {
-            final var executor = new PacketMenuCommand(this);
+            final var executor = new PacketMenuCommand(this, menuRegistry, menuFactory);
             command.setExecutor(executor);
             command.setTabCompleter(executor);
         } else {

@@ -1,11 +1,19 @@
 package com.cebonk03.packetmenu.bootstrap;
 
+import com.cebonk03.packetmenu.adapter.paper.PaperPlayerHandle;
+import com.cebonk03.packetmenu.core.domain.MenuSession;
+import com.cebonk03.packetmenu.core.domain.MenuTemplate;
+import com.cebonk03.packetmenu.core.port.PlayerHandle;
+import com.cebonk03.packetmenu.core.service.MenuFactory;
+import com.cebonk03.packetmenu.core.service.MenuRegistry;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -17,7 +25,7 @@ import org.jspecify.annotations.Nullable;
  *
  * <p>Supports five subcommands:
  * <ul>
- *   <li>{@code open} — open a menu for a player (stub)</li>
+ *   <li>{@code open} — open a menu for a player</li>
  *   <li>{@code reload} — reload configuration (stub)</li>
  *   <li>{@code close} — close a player's menu (stub)</li>
  *   <li>{@code list} — list active sessions (stub)</li>
@@ -32,14 +40,24 @@ public final class PacketMenuCommand implements CommandExecutor, TabCompleter {
     );
 
     private final JavaPlugin plugin;
+    private final MenuRegistry menuRegistry;
+    private final MenuFactory menuFactory;
 
     /**
      * Creates a new command handler.
      *
-     * @param plugin the owning plugin instance
+     * @param plugin       the owning plugin instance
+     * @param menuRegistry the registry for looking up menu templates
+     * @param menuFactory  the factory for creating menu sessions
      */
-    public PacketMenuCommand(JavaPlugin plugin) {
+    public PacketMenuCommand(
+            JavaPlugin plugin,
+            MenuRegistry menuRegistry,
+            MenuFactory menuFactory
+    ) {
         this.plugin = plugin;
+        this.menuRegistry = menuRegistry;
+        this.menuFactory = menuFactory;
     }
 
     @Override
@@ -78,9 +96,19 @@ public final class PacketMenuCommand implements CommandExecutor, TabCompleter {
                     .filter(s -> s.startsWith(partial))
                     .collect(Collectors.toList());
         }
-        if (args.length == 2 && ("open".equalsIgnoreCase(args[0])
-                || "close".equalsIgnoreCase(args[0]))) {
-            // Suggest online player names for open/close
+        if (args.length == 2) {
+            if ("open".equalsIgnoreCase(args[0])) {
+                // Suggest registered menu IDs
+                final var partial = args[1].toLowerCase();
+                return menuRegistry.getAll().keySet().stream()
+                        .filter(id -> id.toLowerCase().startsWith(partial))
+                        .collect(Collectors.toList());
+            }
+            if ("close".equalsIgnoreCase(args[0])) {
+                return null; // delegates to Bukkit's default player name completion
+            }
+        }
+        if (args.length == 3 && "open".equalsIgnoreCase(args[0])) {
             return null; // delegates to Bukkit's default player name completion
         }
         return Collections.emptyList();
@@ -92,12 +120,70 @@ public final class PacketMenuCommand implements CommandExecutor, TabCompleter {
     }
 
     private void handleOpen(CommandSender sender, String[] args) {
-        if (!(sender instanceof Player)) {
-            sender.sendMessage("§cOnly players can open menus.");
+        if (args.length < 2) {
+            sender.sendMessage("§cUsage: /packetmenu open <menuId> [player] [args...]");
             return;
         }
-        // Stub: will be implemented with MenuService
-        sender.sendMessage("§6[PacketMenu] §7Open subcommand — not yet implemented.");
+
+        final String menuId = args[1];
+        final MenuTemplate template = menuRegistry.get(menuId).orElse(null);
+        if (template == null) {
+            sender.sendMessage("§cMenu not found: " + menuId);
+            return;
+        }
+
+        final Player targetPlayer;
+        final List<String> menuArgs;
+
+        if (sender instanceof ConsoleCommandSender) {
+            // Console requires a player name explicitly
+            if (args.length < 3) {
+                sender.sendMessage("§cUsage: /packetmenu open <menuId> <player> [args...]");
+                return;
+            }
+            final String playerName = args[2];
+            targetPlayer = Bukkit.getPlayerExact(playerName);
+            if (targetPlayer == null) {
+                sender.sendMessage("§cPlayer not found: " + playerName);
+                return;
+            }
+            menuArgs = buildArgList(args, 3);
+        } else if (sender instanceof Player player) {
+            if (args.length >= 3) {
+                // Check if the second argument matches an online player name
+                final String potentialName = args[2];
+                final Player matched = Bukkit.getPlayerExact(potentialName);
+                if (matched != null) {
+                    targetPlayer = matched;
+                    menuArgs = buildArgList(args, 3);
+                } else {
+                    targetPlayer = player;
+                    menuArgs = buildArgList(args, 2);
+                }
+            } else {
+                targetPlayer = player;
+                menuArgs = List.of();
+            }
+        } else {
+            sender.sendMessage("§cUnsupported sender type.");
+            return;
+        }
+
+        final PlayerHandle playerHandle = new PaperPlayerHandle(targetPlayer);
+        final MenuSession session = menuFactory.create(playerHandle, template, menuArgs);
+        if (session == null) {
+            sender.sendMessage("§cAccess denied: you do not meet the requirements to open this menu.");
+            return;
+        }
+
+        sender.sendMessage("§6[PacketMenu] §7Menu opened: " + menuId);
+    }
+
+    private static List<String> buildArgList(String[] args, int fromIndex) {
+        if (fromIndex >= args.length) {
+            return List.of();
+        }
+        return List.of(args).subList(fromIndex, args.length);
     }
 
     private void handleReload(CommandSender sender) {

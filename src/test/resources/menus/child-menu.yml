@@ -1,0 +1,19 @@
+id: "child-menu"
+extends: "parent-menu"
+menu_title: "Child Menu Title"
+menu_type: CHEST
+rows: 6
+open_command:
+  - "child"
+update_interval: 10
+items:
+  child_item_1:
+    material: NETHERITE_INGOT
+    slot: 0
+    display_name: "<red>Child Netherite"
+    priority: 10
+  child_item_2:
+    material: GOLD_INGOT
+    slot: 5
+    display_name: "<gold>Child Gold"
+    priority: 8

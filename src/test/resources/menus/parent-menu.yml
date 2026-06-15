@@ -1,0 +1,22 @@
+id: "parent-menu"
+menu_title: "Parent Menu Title"
+menu_type: CHEST
+rows: 3
+open_command:
+  - "parent"
+update_interval: 5
+close_on_click_outside: true
+filler_item:
+  material: GRAY_STAINED_GLASS_PANE
+  display_name: " "
+items:
+  parent_item_1:
+    material: DIAMOND
+    slot: 0
+    display_name: "<gold>Parent Diamond"
+    priority: 10
+  parent_item_2:
+    material: EMERALD
+    slot: 1
+    display_name: "<green>Parent Emerald"
+    priority: 5
