@@ -101,6 +101,9 @@ tasks.shadowJar {
 paper {
     name = "PacketMenu"
     version = project.version.toString()
+    description = project.description.toString()
+    author = "Cebonk03"
+    website = "https://github.com/Cebonk03/PacketMenu"
     main = "com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin"
     apiVersion = "1.21"
     foliaSupported = true
