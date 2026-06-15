@@ -76,6 +76,21 @@
     </Match>
 
     <!--
+        UMAC: Uncallable method in anonymous class.
+        Bukkit/Paper event listeners use @EventHandler with reflection-based
+        dispatch (PluginManager.callEvent()). SpotBugs cannot statically trace
+        this invocation path and falsely reports the handler as uncallable.
+        This is a known false positive specific to Bukkit plugin development.
+    -->
+    <Match>
+        <Or>
+            <Class name="com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin" />
+            <Class name="com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin$1" />
+        </Or>
+        <Bug pattern="UMAC" />
+    </Match>
+
+    <!--
         ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD: Writing to static fields
         from instance methods in integration tests. MockBukkit lifecycle
         setup patterns require static mock state.

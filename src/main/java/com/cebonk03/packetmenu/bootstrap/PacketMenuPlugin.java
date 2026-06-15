@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * </ul>
  */
 @NullMarked
-public class PacketMenuPlugin extends JavaPlugin {
+public class PacketMenuPlugin extends JavaPlugin implements Listener {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(PacketMenuPlugin.class);
 
@@ -218,18 +218,18 @@ public class PacketMenuPlugin extends JavaPlugin {
      * Registers Bukkit event listeners for player lifecycle events.
      */
     private void registerEventListeners() {
-        Bukkit.getPluginManager().registerEvents(new Listener() {
-            @EventHandler
-            public void onPlayerQuit(final PlayerQuitEvent event) {
-                final UUID playerId = event.getPlayer().getUniqueId();
-                menuFactory.cancelUpdates(playerId);
-                activeSessions.remove(playerId);
-                if (playerCache != null) {
-                    playerCache.invalidatePlayer(playerId);
-                }
-            }
-        }, this);
+        Bukkit.getPluginManager().registerEvents(this, this);
         LOGGER.info("Registered player lifecycle listeners.");
+    }
+
+    @EventHandler
+    public void onPlayerQuit(final PlayerQuitEvent event) {
+        final UUID playerId = event.getPlayer().getUniqueId();
+        menuFactory.cancelUpdates(playerId);
+        activeSessions.remove(playerId);
+        if (playerCache != null) {
+            playerCache.invalidatePlayer(playerId);
+        }
     }
 
     // ── Cleanup ──────────────────────────────────────────────────────────────────
