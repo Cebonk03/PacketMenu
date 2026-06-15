@@ -16,7 +16,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 import org.mockito.Mockito;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
 
 /**
  * Unit tests for {@link ConfigurateMenuLoader}.
@@ -151,7 +158,7 @@ final class ConfigurateMenuLoaderTest {
             assertAll("minimal menu fields",
                 () -> assertEquals("minimal-menu", template.id()),
                 () -> assertNotNull(template.title(), "title should not be null"),
-                () -> assertEquals(MenuType.GENERIC_9x1, template.type()),
+                () -> assertEquals(MenuType.GENERIC_9x6, template.type()),
                 () -> assertTrue(template.openCommands().isEmpty(),
                     "should have no open commands"),
                 () -> assertEquals(0, template.slotTemplates().size(),

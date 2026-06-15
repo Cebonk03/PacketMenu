@@ -4,7 +4,6 @@ import com.cebonk03.packetmenu.bootstrap.PacketMenuPlugin;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchRule;
-import com.tngtech.archunit.library.Architectures.LayeredArchitecture;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
@@ -23,7 +22,7 @@ class ArchitectureTest {
     // ── Rule 1: Hexagonal Layer Boundaries ──────────────────────────────────────
 
     @ArchTest
-    static final ArchRule hexagonal_layers_are_respected =
+    static final ArchRule HEXAGONAL_LAYERS_ARE_RESPECTED =
         layeredArchitecture()
             .consideringOnlyDependenciesInLayers()
             .layer("Domain").definedBy("..core.domain..")
@@ -38,7 +37,7 @@ class ArchitectureTest {
     // ── Rule 2: No Bukkit in Core Layer ────────────────────────────────────────
 
     @ArchTest
-    static final ArchRule core_must_not_depend_on_bukkit =
+    static final ArchRule CORE_MUST_NOT_DEPEND_ON_BUKKIT =
         noClasses()
             .that().resideInAnyPackage("..core..")
             .should().dependOnClassesThat().resideInAnyPackage("org.bukkit..")
@@ -47,7 +46,7 @@ class ArchitectureTest {
     // ── Rule 3: No PacketEvents in Core Layer ───────────────────────────────────
 
     @ArchTest
-    static final ArchRule core_must_not_depend_on_packetevents =
+    static final ArchRule CORE_MUST_NOT_DEPEND_ON_PACKETEVENTS =
         noClasses()
             .that().resideInAnyPackage("..core..")
             .should().dependOnClassesThat().resideInAnyPackage(
@@ -57,7 +56,7 @@ class ArchitectureTest {
     // ── Rule 4a: Naming Convention — Adapter Classes ────────────────────────────
 
     @ArchTest
-    static final ArchRule adapter_classes_should_end_with_role_suffix =
+    static final ArchRule ADAPTER_CLASSES_SHOULD_END_WITH_ROLE_SUFFIX =
         classes()
             .that().resideInAnyPackage("..adapter..")
             // Known exceptions with alternative naming patterns:
@@ -77,7 +76,7 @@ class ArchitectureTest {
     // ── Rule 4b: Naming Convention — Service Classes ────────────────────────────
 
     @ArchTest
-    static final ArchRule service_classes_should_have_meaningful_names =
+    static final ArchRule SERVICE_CLASSES_SHOULD_HAVE_MEANINGFUL_NAMES =
         classes()
             .that().resideInAnyPackage("..core.service..")
             .should().haveSimpleNameNotEndingWith("Util")
@@ -89,7 +88,7 @@ class ArchitectureTest {
     // ── Rule 5: No Cyclic Dependencies ──────────────────────────────────────────
 
     @ArchTest
-    static final ArchRule no_cyclic_dependencies_between_packages =
+    static final ArchRule NO_CYCLIC_DEPENDENCIES_BETWEEN_PACKAGES =
         slices()
             .matching("com.cebonk03.packetmenu.(*)..")
             .should().beFreeOfCycles()

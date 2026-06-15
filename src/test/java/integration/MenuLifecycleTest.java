@@ -9,7 +9,6 @@ import com.cebonk03.packetmenu.core.domain.MenuAction;
 import com.cebonk03.packetmenu.core.domain.MenuSession;
 import com.cebonk03.packetmenu.core.domain.MenuTemplate;
 import com.cebonk03.packetmenu.core.domain.MenuType;
-import com.cebonk03.packetmenu.core.domain.SlotItem;
 import com.cebonk03.packetmenu.core.domain.SlotTemplate;
 import com.cebonk03.packetmenu.core.port.PlaceholderPort;
 import com.cebonk03.packetmenu.core.port.PlayerHandle;
@@ -30,15 +29,19 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 import net.kyori.adventure.text.Component;
 import org.bukkit.NamespacedKey;
-import org.bukkit.enchantments.Enchantment;
-import org.bukkit.inventory.ItemFlag;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.fail;
+import static org.mockito.Mockito.mock;
 
 /**
  * Integration test for the full menu lifecycle: template registration, session

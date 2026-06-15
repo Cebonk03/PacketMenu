@@ -65,6 +65,7 @@ dependencies {
     testImplementation(libs.mockito.junit.jupiter)
     testImplementation(libs.archunit.junit5)
     testImplementation(libs.mockbukkit)
+    testImplementation(libs.packetevents.spigot)
 }
 
 // ── Test configuration ────────────────────────────────────────────────────────

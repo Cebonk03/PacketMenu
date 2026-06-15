@@ -10,7 +10,6 @@ import com.cebonk03.packetmenu.core.domain.MenuType;
 import com.cebonk03.packetmenu.core.domain.Requirement;
 import com.cebonk03.packetmenu.core.domain.RequirementContext;
 import com.cebonk03.packetmenu.core.domain.RequirementSet;
-import com.cebonk03.packetmenu.core.domain.SlotItem;
 import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.service.RequirementEvaluator;
 import java.util.List;
@@ -23,8 +22,15 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
+import static org.mockito.Mockito.verifyNoInteractions;
+import static org.mockito.Mockito.argThat;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.mock;
 
 /**
  * Unit tests for {@link RequirementEvaluator}.

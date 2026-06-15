@@ -7,7 +7,6 @@ import com.cebonk03.packetmenu.core.domain.ClickType;
 import com.cebonk03.packetmenu.core.domain.MenuAction;
 import com.cebonk03.packetmenu.core.domain.MenuSession;
 import com.cebonk03.packetmenu.core.domain.MenuType;
-import com.cebonk03.packetmenu.core.domain.SlotItem;
 import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.service.ActionRegistry;
 import java.util.List;
@@ -19,8 +18,15 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.any;
 
 /**
  * Unit tests for {@link DeluxeActionParser}.

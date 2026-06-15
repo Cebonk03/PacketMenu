@@ -55,4 +55,24 @@
         <Bug pattern="NP_NULL_ON_SOME_PATH_FROM_RETURN_VALUE" />
     </Match>
 
+    <!--
+        RV_RETURN_VALUE_IGNORED: Return value ignored in test code.
+        Tests for immutability intentionally call withRevision/withItem
+        and discard the result to verify the original is unchanged.
+    -->
+    <Match>
+        <Class name="unit.domain.MenuSessionTest" />
+        <Bug pattern="RV_RETURN_VALUE_IGNORED" />
+    </Match>
+
+    <!--
+        ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD: Writing to static fields
+        from instance methods in integration tests. MockBukkit lifecycle
+        setup patterns require static mock state.
+    -->
+    <Match>
+        <Class name="integration.MenuLifecycleTest" />
+        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
+    </Match>
+
 </FindBugsFilter>

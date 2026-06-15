@@ -198,7 +198,7 @@ public final class ConfigurateMenuLoader implements MenuLoader {
 
         // Try direct enum match first (e.g. GENERIC_9x3)
         for (final MenuType mt : MenuType.values()) {
-            if (mt.name().equals(upper)) {
+            if (mt.name().equalsIgnoreCase(raw)) {
                 return mt;
             }
         }

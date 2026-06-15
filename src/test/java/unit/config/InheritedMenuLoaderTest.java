@@ -4,7 +4,6 @@ import com.cebonk03.packetmenu.adapter.config.ConfigurateMenuLoader;
 import com.cebonk03.packetmenu.adapter.config.InheritedMenuLoader;
 import com.cebonk03.packetmenu.adapter.config.InvalidMenuException;
 import com.cebonk03.packetmenu.core.domain.MenuTemplate;
-import com.cebonk03.packetmenu.core.domain.MenuType;
 import com.cebonk03.packetmenu.core.port.ActionParser;
 import com.cebonk03.packetmenu.core.port.MenuRegistry;
 import com.cebonk03.packetmenu.core.port.SchedulerPort;
@@ -18,8 +17,13 @@ import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.io.TempDir;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 /**
  * Unit tests for {@link InheritedMenuLoader}.

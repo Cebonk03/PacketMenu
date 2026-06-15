@@ -1,11 +1,16 @@
 package unit.domain;
 
-import com.cebonk03.packetmenu.core.domain.ActionContext;
 import com.cebonk03.packetmenu.core.domain.ActionResult;
 import com.cebonk03.packetmenu.core.domain.MenuAction;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertInstanceOf;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertAll;
+import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertSame;
 
 /**
  * Unit tests for {@link ActionResult} sealed interface and its implementations.
