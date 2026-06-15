@@ -629,7 +629,10 @@ public final class ConfigurateMenuLoader implements MenuLoader {
             if (raw == null || raw.isBlank()) {
                 continue;
             }
-            result.add(actionParser.parse(raw));
+            final MenuAction action = actionParser.parse(raw);
+            if (action != null) {
+                result.add(action);
+            }
         }
         return List.copyOf(result);
     }
