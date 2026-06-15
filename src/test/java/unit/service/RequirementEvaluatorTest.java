@@ -12,6 +12,7 @@ import com.cebonk03.packetmenu.core.domain.RequirementContext;
 import com.cebonk03.packetmenu.core.domain.RequirementSet;
 import com.cebonk03.packetmenu.core.port.PlayerHandle;
 import com.cebonk03.packetmenu.core.service.RequirementEvaluator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import net.kyori.adventure.text.Component;
@@ -88,16 +89,14 @@ final class RequirementEvaluatorTest {
             when(passingReq.test(any())).thenReturn(true);
             when(failingReq.test(any())).thenReturn(false);
 
-            final var set = new RequirementSet(
-                LogicMode.AND,
-                Map.of("pass", passingReq, "fail", failingReq, "never", passingReq),
-                null);
+            final var reqMap = new LinkedHashMap<String, Requirement>();
+            reqMap.put("pass", passingReq);
+            reqMap.put("fail", failingReq);
+            reqMap.put("never", passingReq);
+            final var set = new RequirementSet(LogicMode.AND, reqMap, null);
 
             assertFalse(RequirementEvaluator.evaluate(set, context()));
             verify(failingReq, times(1)).test(any());
-            // "pass" is first (map iteration order is insertion order for Map.of)
-            // but Map.of has indeterminate iteration order for > 2 entries.
-            // Just verify the short-circuit semantics: at least one was evaluated.
         }
 
         @Test
@@ -120,10 +119,10 @@ final class RequirementEvaluatorTest {
             when(passingReq.test(any())).thenReturn(true);
             when(failingReq.test(any())).thenReturn(false);
 
-            final var set = new RequirementSet(
-                LogicMode.OR,
-                Map.of("fail", failingReq, "pass", passingReq),
-                null);
+            final var reqMap = new LinkedHashMap<String, Requirement>();
+            reqMap.put("fail", failingReq);
+            reqMap.put("pass", passingReq);
+            final var set = new RequirementSet(LogicMode.OR, reqMap, null);
 
             assertTrue(RequirementEvaluator.evaluate(set, context()));
         }
@@ -133,10 +132,10 @@ final class RequirementEvaluatorTest {
         void shortCircuitOnSuccess() {
             when(passingReq.test(any())).thenReturn(true);
 
-            final var set = new RequirementSet(
-                LogicMode.OR,
-                Map.of("pass", passingReq, "never", failingReq),
-                null);
+            final var reqMap = new LinkedHashMap<String, Requirement>();
+            reqMap.put("pass", passingReq);
+            reqMap.put("never", failingReq);
+            final var set = new RequirementSet(LogicMode.OR, reqMap, null);
 
             assertTrue(RequirementEvaluator.evaluate(set, context()));
             verify(passingReq, times(1)).test(any());

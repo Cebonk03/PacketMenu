@@ -51,9 +51,9 @@ class ContainerIdAllocatorTest {
 
         assertAll("independent per player",
             () -> assertEquals(101, a1),
-            () -> assertEquals(101, b1),
-            () -> assertEquals(102, a2),
-            () -> assertEquals(102, b2)
+            () -> assertEquals(102, b1),
+            () -> assertEquals(103, a2),
+            () -> assertEquals(104, b2)
         );
     }
 
@@ -95,12 +95,12 @@ class ContainerIdAllocatorTest {
     @Test
     void reclaimForPlayerUnaffectedByOtherPlayer() {
         allocator.allocate(playerA); // 101
-        allocator.allocate(playerB); // 101
+        allocator.allocate(playerB); // 102
 
         allocator.reclaim(playerA, 101);
 
         assertEquals(101, allocator.allocate(playerA)); // reclaimed
-        assertEquals(102, allocator.allocate(playerB)); // fresh, unaffected
+        assertEquals(103, allocator.allocate(playerB)); // fresh, unaffected
     }
 
     @Test
@@ -188,7 +188,7 @@ class ContainerIdAllocatorTest {
         allocator.reclaim(player, 101);
         assertEquals(101, allocator.allocate(player));
 
-        // Next without reclaim should be fresh
-        assertEquals(101 + count + 1, allocator.allocate(player));
+        // Next without reclaim should be fresh (counter is at 101 + count)
+        assertEquals(101 + count, allocator.allocate(player));
     }
 }

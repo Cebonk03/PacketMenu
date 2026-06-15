@@ -168,8 +168,10 @@ class TextUtilTest {
 
     @Test
     void replaceArgsHandlesReplacementWithEmptyString() {
+        var args = new java.util.ArrayList<String>();
+        args.add(null);
         assertEquals("Hello ",
-            TextUtil.replaceArgs("Hello %arg_1%", new java.util.ArrayList<>(List.of((String) null))));
+            TextUtil.replaceArgs("Hello %arg_1%", args));
     }
 
     @Test
