@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import net.kyori.adventure.text.Component;
+import edu.umd.cs.findbugs.annotations.SuppressFBWarnings;
 import org.bukkit.NamespacedKey;
 import org.junit.jupiter.api.Test;
 
@@ -80,6 +81,7 @@ class MenuSessionTest {
     }
 
     @Test
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
     void withRevisionDoesNotMutateOriginal() {
         session.withRevision();
         assertEquals(0, session.revisionId());
@@ -121,6 +123,7 @@ class MenuSessionTest {
     }
 
     @Test
+    @SuppressFBWarnings("RV_RETURN_VALUE_IGNORED")
     void withItemDoesNotMutateOriginalSession() {
         session.withItem(0, REPLACEMENT_ITEM);
         assertSame(BASE_ITEM, session.slots().get(0).item());
