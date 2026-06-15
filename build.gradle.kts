@@ -110,7 +110,7 @@ paper {
 
     serverDependencies {
         register("PacketEvents") {
-            required = true
+            required = false
             load = net.minecrell.pluginyml.paper.PaperPluginDescription.RelativeLoadOrder.BEFORE
         }
         register("PlaceholderAPI") {

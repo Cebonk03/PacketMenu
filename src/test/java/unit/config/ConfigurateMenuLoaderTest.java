@@ -80,8 +80,8 @@ final class ConfigurateMenuLoaderTest {
             final Path menuPath = Path.of(RESOURCE_DIR, "valid-menu.yml");
             final MenuTemplate template = loader.load(menuPath);
 
-            assertEquals(3, template.slotTemplates().size(),
-                "should have 3 slot templates (diamond_sword + 3 pickaxe slots + skull)");
+            assertEquals(5, template.slotTemplates().size(),
+                "should have 5 slot templates (diamond_sword + 3 pickaxe slots + skull)");
 
             // Diamond sword item
             final var swordSlot = template.slotTemplates().stream()
